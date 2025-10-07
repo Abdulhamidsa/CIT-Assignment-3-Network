@@ -7,6 +7,9 @@ namespace Assignment3
         static void Main(string[] args)
         {
             Console.WriteLine("Hello Web Service :-)");
+    
+            var server = new CITServer();
+            server.Run();
         }
     }
 }
