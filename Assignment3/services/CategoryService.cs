@@ -8,12 +8,13 @@ namespace Assignment3.Services
     public class CategoryService
     {
         // pretend this is our small database of categories
-        private List<Category> categories = new List<Category>
-        {
-            new Category { Id = 1, Name = "Books" },
-            new Category { Id = 2, Name = "Condiments" },
-            new Category { Id = 3, Name = "Clothing" }
-        };
+      private List<Category> categories = new List<Category>
+{
+    new Category { Id = 1, Name = "Beverages" },
+    new Category { Id = 2, Name = "Condiments" },
+    new Category { Id = 3, Name = "Confections" }
+};
+
 
         // return all categories
         public List<Category> GetCategories()
