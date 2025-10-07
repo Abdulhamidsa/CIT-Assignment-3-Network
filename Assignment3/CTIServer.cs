@@ -156,5 +156,56 @@ namespace Assignment3
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             }));
         }
+
+        private void HandleCreate(StreamWriter w, Request r)
+        {
+            if (parser.Path != "/api/categories" || parser.HasId) { Send(w, new Response { Status = "4 Bad Request" }); return; }
+            try
+            {
+                var json = JsonSerializer.Deserialize<JsonElement>(r.Body ?? "");
+                string name = json.GetProperty("name").GetString() ?? "";
+                var all = categories.GetCategories();
+                int id = all.Count > 0 ? all[^1].Id + 1 : 1;
+                categories.CreateCategory(id, name);
+                var c = categories.GetCategory(id)!;
+                Send(w, new Response { Status = "2 Created", Body = JsonSerializer.Serialize(new { cid = c.Id, name = c.Name }) });
+            }
+            catch { Send(w, new Response { Status = "4 Bad Request" }); }
+        }
+
+        private void HandleUpdate(StreamWriter w, Request r)
+        {
+            if (parser.Path != "/api/categories" || !parser.HasId || !int.TryParse(parser.Id, out int id))
+            { Send(w, new Response { Status = "4 Bad Request" }); return; }
+
+            if (string.IsNullOrWhiteSpace(r.Body))
+            { Send(w, new Response { Status = "4 missing body" }); return; }
+
+            try
+            {
+                using var doc = JsonDocument.Parse(r.Body);
+                if (!doc.RootElement.TryGetProperty("name", out var nameProp))
+                { Send(w, new Response { Status = "4 Bad Request" }); return; }
+
+                string newName = nameProp.GetString() ?? "";
+                if (!categories.UpdateCategory(id, newName))
+                { Send(w, new Response { Status = "5 Not found" }); return; }
+
+                var c = categories.GetCategory(id)!;
+                Send(w, new Response { Status = "3 Updated", Body = JsonSerializer.Serialize(new { cid = c.Id, name = c.Name }) });
+            }
+            catch { Send(w, new Response { Status = "4 illegal body" }); }
+        }
+
+        private void HandleDelete(StreamWriter w)
+        {
+            if (parser.Path != "/api/categories" || !parser.HasId || !int.TryParse(parser.Id, out int id))
+            { Send(w, new Response { Status = "4 Bad Request" }); return; }
+
+            if (!categories.DeleteCategory(id))
+            { Send(w, new Response { Status = "5 Not found" }); return; }
+
+            Send(w, new Response { Status = "1 Ok" });
+        }
     }
 }
