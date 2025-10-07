@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Assignment3.DTOS
+{
+    public class Response
+    {
+        public string Status { get; set; } = "";
+        public object? Body { get; set; }
+    }
+}
