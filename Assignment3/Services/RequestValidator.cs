@@ -29,7 +29,8 @@ namespace Assignment3.Services
                 problems.Add("missing method");
             }
 
-            if (string.IsNullOrWhiteSpace(path))
+            // Echo method doesn't require a path
+            if (string.IsNullOrWhiteSpace(path) && method != "echo")
             {
                 problems.Add("missing path");
             }
